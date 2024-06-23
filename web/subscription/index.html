@@ -14,6 +14,16 @@
       body {
         font-family: "Inter", sans-serif;
       }
+      div#popup {
+        background-color: white;
+        border: 1px solid #e2e8f0;
+      }
+      @media (prefers-color-scheme: dark) {
+        div#popup {
+          background-color: #1a202c;
+          border: 1px solid #2d3748;
+        }
+      }
     </style>
     <!-- Scripts -->
     <script
@@ -291,7 +301,8 @@
   </head>
   <body class="bg-white dark:bg-[#1a202c]">
     <main
-      class="container mx-auto w-screen max-w-[680px] px-4 md:px-0 text-[#1a202c] dark:text-[#edeeee]"
+      class="relative container mx-auto w-screen max-w-[680px] px-4 md:px-0 text-[#1a202c] dark:text-[#edeeee]"
+      id="page-container"
     >
       <div class="flex flex-col items-center pt-16">
         <div class="relative h-24 w-24 overflow-hidden rounded-full">
@@ -762,21 +773,21 @@
           </div>
         </div>
       </div>
-
-      <div
-        id="popup"
-        class="fixed w-fit min-w-[20rem] max-h-[95vh] h-fit p-10 pt-7 shadow-dialog-shadow dark:shadow-2xl rounded-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-main-light dark:bg-main-dark hidden"
-      >
-        <h2
-          class="h-10 leading-[2.5rem] mb-4 inline-block font-semibold text-gray-950 dark:text-white"
-        ></h2>
-        <a
-          class="close absolute ltr:right-10 rtl:left-10 top-7 text-3xl cursor-pointer dark:text-white text-gray-950"
-          >&times;</a
-        >
-        <div class="content rounded-lg max-h-[90%]"></div>
-      </div>
     </main>
+
+    <div
+      id="popup"
+      class="fixed w-fit min-w-[20rem] max-h-[95vh] h-fit p-10 pt-7 shadow-dialog-shadow dark:shadow-2xl rounded-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-dark hidden"
+    >
+      <h2
+        class="h-10 leading-[2.5rem] mb-4 inline-block font-semibold text-gray-950 dark:text-white"
+      ></h2>
+      <a
+        class="close absolute right-10 top-7 text-3xl cursor-pointer dark:text-white text-gray-950"
+        >&times;</a
+      >
+      <div class="content rounded-lg max-h-[90%]"></div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <script>
