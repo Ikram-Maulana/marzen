@@ -133,29 +133,10 @@ validate_username() {
   while true; do
     read -rp "Enter your username (only alphanumeric): " USERNAME
 
-    if [[ ! "$USERNAME" =~ ^[a-z][a-z0-9]{2,9}$ ]] || [[ "$USERNAME" == *"admin"* ]]; then
-      colorized_echo "red" "Username must be at least 3 characters long, at most 10 characters long, must start with a letter, do not contain the word 'admin', and only alphanumeric."
+    if [[ ! "$USERNAME" =~ ^[A-Za-z0-9]{3,10}$ ]] || [[ "$USERNAME" == *"admin"* ]]; then
+      colorized_echo "red" "Username must be at least 3 characters long, at most 10 characters long, do not contain the word 'admin', and only alphanumeric."
     else
       echo "$USERNAME" > /etc/data/userpanel
-      break
-    fi
-  done
-}
-
-# The above shell script defines a function `validate_password` that prompts the user to enter a
-# password and validates it based on certain criteria. The password must be at least 8 characters
-# long, at most 20 characters long, and must contain at least 1 lowercase letter, 1 uppercase letter,
-# 1 numeric character, and 1 special character from the specified set. If the entered password does
-# not meet these requirements, an error message is displayed in red text. If the password is valid, it
-# is saved to a file named `passpanel` in the `/etc/data/` directory.
-validate_password() {
-  while true; do
-    read -rp "Enter your password: " PASSWORD
-
-    if [[ ! "$PASSWORD" =~ ^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[~\!@#\$%\^&\*\(\)-_\+=\{\}\[\]\|\\;:\"<>,\./\?]).{8,20}$ ]]; then
-      colorized_echo "red" "Password must be at least 8 characters long, at most 20 characters long, and must contain at least 1 lower case letter, 1 upper case letter, 1 numeric character, and 1 special character."
-    else
-      echo "$passpanel" > /etc/data/passpanel
       break
     fi
   done
@@ -237,8 +218,10 @@ mkdir -p /etc/data
 read -rp "Enter your domain: " DOMAIN
 echo "$DOMAIN" > /etc/data/domain
 
+# Ask user for username and password
 validate_username
-validate_password
+read -rp "Enter your password: " PASSWORD
+echo "$PASSWORD" > /etc/data/passpanel
 
 # Clear the screen and update the package repository
 clear
