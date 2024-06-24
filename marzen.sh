@@ -159,7 +159,7 @@ get_latest_version() {
 # 5. Unzips the downloaded xray-linux-64.zip file.
 # 6. Removes the downloaded zip file after extraction.
 install_xray() {
-  local version = $(get_latest_version "XTLS/Xray-core")
+  local version=$(get_latest_version "XTLS/Xray-core")
   mkdir -p /var/lib/marzban/core
   wget -qO /var/lib/marzban/core/xray-linux-64.zip "https://github.com/XTLS/Xray-core/releases/download/$version/Xray-linux-64.zip"
   cd /var/lib/marzban/core || exit
