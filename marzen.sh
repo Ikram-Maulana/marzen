@@ -131,10 +131,10 @@ fi
 # username. It then checks if the entered username meets certain criteria:
 validate_username() {
   while true; do
-    read -rp "Enter your username (only alphanumeric): " USERNAME
+    read -rp "Enter your username (only alphanumeric): " userpanel
 
-    if [[ ! "$USERNAME" =~ ^[A-Za-z0-9]{3,10}$ ]] || [[ "$USERNAME" == *"admin"* ]]; then
-      colorized_echo "red" "Username must be at least 3 characters long, at most 10 characters long, do not contain the word 'admin', and only alphanumeric."
+    if [[ ! "$userpanel" =~ ^[A-Za-z0-9]+$ ]] || [[ "$userpanel" == *"admin"* ]]; then
+      colorized_echo "red" "Username must be only alphanumeric and do not contain the word 'admin'."
     else
       echo "$userpanel" > /etc/data/userpanel
       break
@@ -209,7 +209,7 @@ domain=$(cat /etc/data/domain)
 # Ask user for email, username and password
 read -rp "Enter your email for Certbot: " email
 validate_username
-read -rp "Enter your password: " PASSWORD
+read -rp "Enter your password: " passpanel
 echo "$passpanel" > /etc/data/passpanel
 
 # Clear the screen and update the package repository
