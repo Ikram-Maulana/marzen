@@ -276,7 +276,7 @@ colorized_echo "green" "The timezone has been set to Asia/Jakarta."
 
 # Install Marzban
 colorized_echo "green" "Installing Marzban..."
-sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban.sh)" @ install
+sudo bash -c "$(curl -sL https://github.com/Ikram-Maulana/marzen-scripts/raw/master/marzen.sh)" @ install
 colorized_echo "green" "Marzban has been installed."
 
 # Install Subs
