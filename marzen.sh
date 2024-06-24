@@ -162,7 +162,7 @@ install_xray() {
   local version=$(get_latest_version "XTLS/Xray-core")
   mkdir -p /var/lib/marzban/core
   wget -qO /var/lib/marzban/core/xray-linux-64.zip "https://github.com/XTLS/Xray-core/releases/download/$version/Xray-linux-64.zip"
-  cd /var/lib/marzban/core || exit
+  cd /var/lib/marzban/core
   unzip -q xray-linux-64.zip
   rm -f xray-linux-64.zip
   chmod +x xray
@@ -417,7 +417,7 @@ colorized_echo "green" "Warp Proxy has been installed."
 colorized_echo "green" "Finalizing the installation..."
 apt autoremove -y
 apt clean
-cd /opt/marzban || exit
+cd /opt/marzban
 sed -i "s/# SUDO_USERNAME = \"admin\"/SUDO_USERNAME = \"${userpanel}\"/" /opt/marzban/.env
 sed -i "s/# SUDO_PASSWORD = \"admin\"/SUDO_PASSWORD = \"${passpanel}\"/" /opt/marzban/.env
 docker compose down && docker compose up -d
