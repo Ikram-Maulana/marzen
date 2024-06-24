@@ -142,15 +142,6 @@ validate_username() {
   done
 }
 
-# The above shell script defines a function `get_latest_version()` that takes a GitHub repository as
-# an argument. Inside the function, it uses `curl` to make a request to the GitHub API for the latest
-# release of the specified repository. It then uses `grep` to extract the latest version number from
-# the API response and returns it.
-get_latest_version() {
-  local repo=$1
-  curl -s "https://api.github.com/repos/$repo/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")'
-}
-
 # The above shell script defines a function `install_xray` that performs the following tasks:
 # 1. Retrieves the latest version of Xray-core from the GitHub repository "XTLS/Xray-core".
 # 2. Creates a directory `/var/lib/marzban/core` if it does not exist.
@@ -159,25 +150,21 @@ get_latest_version() {
 # 5. Unzips the downloaded xray-linux-64.zip file.
 # 6. Removes the downloaded zip file after extraction.
 install_xray() {
-  local version=$(get_latest_version "XTLS/Xray-core")
   mkdir -p /var/lib/marzban/core
-  wget -qO /var/lib/marzban/core/xray-linux-64.zip "https://github.com/XTLS/Xray-core/releases/download/$version/Xray-linux-64.zip"
-  cd /var/lib/marzban/core
-  unzip -q xray-linux-64.zip
-  rm -f xray-linux-64.zip
-  chmod +x xray
+  wget -O /var/lib/marzban/core/xray-linux-64.zip "https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip"
+  cd /var/lib/marzban/core && unzip xray-linux-64.zip && chmod +x xray && rm -f xray-linux-64.zip
   cd
 }
 
 # The above shell script is a function `install_vnstat` that installs the `vnstat` network traffic
 # monitor tool on a Linux system. Here is a breakdown of the steps performed by the script:
 install_vnstat() {
-  local version = $(get_latest_version "vergoh/vnstat")
   apt update && apt -y install vnstat libsqlite3-dev
   /etc/init.d/vnstat restart
-  wget -qO /tmp/vnstat.tar.gz "https://github.com/vergoh/vnstat/releases/download/$version/vnstat-$version.tar.gz"
+  # Hardcoded version for now, can be updated to latest version
+  wget -O /tmp/vnstat.tar.gz "https://github.com/vergoh/vnstat/releases/download/v2.12/vnstat-2.12.tar.gz"
   tar -xzf /tmp/vnstat.tar.gz -C /tmp
-  cd /tmp/vnstat-$version
+  cd /tmp/vnstat-2.12
   ./configure --prefix=/usr --sysconfdir=/etc && make && make install
   if [ -d /var/lib/vnstat ]; then
     chown -R vnstat:vnstat /var/lib/vnstat
@@ -215,10 +202,12 @@ install_warp_proxy() {
 
 # Ask user for domain
 mkdir -p /etc/data
-read -rp "Enter your domain: " DOMAIN
-echo "$DOMAIN" > /etc/data/domain
+read -rp "Enter your domain: " domain
+echo "$domain" > /etc/data/domain
+domain=$(cat /etc/data/domain)
 
-# Ask user for username and password
+# Ask user for email, username and password
+read -rp "Enter your email for Certbot: " email
 validate_username
 read -rp "Enter your password: " PASSWORD
 echo "$PASSWORD" > /etc/data/passpanel
@@ -290,7 +279,7 @@ cat <<EOF > /opt/marzban/.env
 UVICORN_HOST = "0.0.0.0"
 UVICORN_PORT = 7879
 
-## We highly recommend add admin using `marzban cli` tool and do not use
+## We highly recommend add admin using marzban cli tool and do not use
 ## the following variables which is somehow hard codded infrmation.
 # SUDO_USERNAME = "admin"
 # SUDO_PASSWORD = "admin"
@@ -336,10 +325,21 @@ colorized_echo "green" "Xray has been installed."
 # Profile
 colorized_echo "green" "Installing Profile..."
 echo -e 'profile' >> /root/.profile
-wget -O /usr/bin/profile "https://raw.githubusercontent.com/Ikram-Maulana/marzen/main/config/profile";
+cat <<EOF > /usr/bin/profile
+#!/bin/bash
+clear
+neofetch
+echo -e " Welcome to Marzban Extended (Marzen) AutoInstaller"
+echo -e " Type \e[1;32mmarzban\e[0m to show command list"
+echo -e ""
+service-check
+EOF
 chmod +x /usr/bin/profile
 apt install neofetch -y
-wget -O ~/.config/neofetch/config.conf "https://raw.githubusercontent.com/Chick2D/neofetch-themes/main/small/dotfetch.conf"
+# Ensure the .config/neofetch directory exists
+mkdir -p /root/.config/neofetch
+# Download the neofetch config file
+wget -O /root/.config/neofetch/config.conf "https://raw.githubusercontent.com/Chick2D/neofetch-themes/main/small/dotfetch.conf"
 wget -O /usr/bin/service-check "https://raw.githubusercontent.com/Ikram-Maulana/marzen/main/config/service-check.sh"
 chmod +x /usr/bin/service-check
 colorized_echo "green" "Profile has been installed."
@@ -353,12 +353,6 @@ colorized_echo "green" "Docker Compose has been installed."
 colorized_echo "green" "Installing vnstat..."
 install_vnstat
 colorized_echo "green" "vnstat has been installed successfully."
-
-# Install Speedtest
-colorized_echo "green" "Installing Speedtest..."
-curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | sudo bash
-sudo apt-get install speedtest -y
-colorized_echo "green" "Speedtest has been installed."
 
 # Install Nginx
 colorized_echo "green" "Installing Nginx..."
@@ -380,9 +374,9 @@ colorized_echo "green" "Socat has been installed."
 # Install Certbot
 colorized_echo "green" "Installing Certbot..."
 curl https://get.acme.sh | sh -s email=$email
-/root/.acme.sh/acme.sh --server letsencrypt --register-account -m $email --issue -d $domain --standalone -k ec-256 --debug
-~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /var/lib/marzban/xray.crt --keypath /var/lib/marzban/xray.key --ecc
-wget -O /var/lib/marzban/xray_config.json "https://raw.githubusercontent.com/Ikram-Maulana/marzen/main/xray/xray_config.json"
+/root/.acme.sh/acme.sh --register-account -m $email --issue --standalone -d $domain -k ec-256 --server letsencrypt --debug
+/root/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /var/lib/marzban/xray.crt --keypath /var/lib/marzban/xray.key --ecc
+wget -O /var/lib/marzban/xray_config.json "https://raw.githubusercontent.com/Ikram-Maulana/marzen/main/xray/xray-config.json"
 colorized_echo "green" "Certbot has been installed."
 
 # Install and configure firewall

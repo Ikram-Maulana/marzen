@@ -19,7 +19,7 @@ Marzen is a proxy management tool that provides a simple and easy-to-use user in
 - Update and upgrade your system
 
   ```bash
-  apt-get update && apt-get upgrade -y && update-grub && reboot
+  apt-get update && apt-get upgrade -y && apt dist-upgrade -y && update-grub && reboot
   ```
 
 - Make sure you logged in as root
