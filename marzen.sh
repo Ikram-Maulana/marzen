@@ -136,7 +136,7 @@ validate_username() {
     if [[ ! "$USERNAME" =~ ^[A-Za-z0-9]{3,10}$ ]] || [[ "$USERNAME" == *"admin"* ]]; then
       colorized_echo "red" "Username must be at least 3 characters long, at most 10 characters long, do not contain the word 'admin', and only alphanumeric."
     else
-      echo "$USERNAME" > /etc/data/userpanel
+      echo "$userpanel" > /etc/data/userpanel
       break
     fi
   done
@@ -210,7 +210,7 @@ domain=$(cat /etc/data/domain)
 read -rp "Enter your email for Certbot: " email
 validate_username
 read -rp "Enter your password: " PASSWORD
-echo "$PASSWORD" > /etc/data/passpanel
+echo "$passpanel" > /etc/data/passpanel
 
 # Clear the screen and update the package repository
 clear
