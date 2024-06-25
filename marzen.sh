@@ -131,10 +131,10 @@ fi
 # username. It then checks if the entered username meets certain criteria:
 validate_username() {
   while true; do
-    read -rp "Enter your username (only alphanumeric): " userpanel
+    read -rp "Enter your panel username (only alphanumeric): " userpanel
 
     if [[ ! "$userpanel" =~ ^[A-Za-z0-9]+$ ]] || [[ "$userpanel" == *"admin"* ]]; then
-      colorized_echo "red" "Username must be only alphanumeric and do not contain the word 'admin'."
+      echo "Username must be only alphanumeric and do not contain the word 'admin'."
     else
       echo "$userpanel" > /etc/data/userpanel
       break
@@ -166,12 +166,13 @@ install_vnstat() {
   tar -xzf /tmp/vnstat.tar.gz -C /tmp
   cd /tmp/vnstat-2.12
   ./configure --prefix=/usr --sysconfdir=/etc && make && make install
+  cd
   if [ -d /var/lib/vnstat ]; then
     chown -R vnstat:vnstat /var/lib/vnstat
   fi
   systemctl enable vnstat
   /etc/init.d/vnstat restart
-  rm -rf /tmp/vnstat.tar.gz /tmp/vnstat-$version
+  rm -rf /tmp/vnstat.tar.gz /tmp/vnstat-2.12
 }
 
 # The above shell script defines a function `install_warp_proxy` that attempts to download a script
@@ -209,7 +210,7 @@ domain=$(cat /etc/data/domain)
 # Ask user for email, username and password
 read -rp "Enter your email for Certbot: " email
 validate_username
-read -rp "Enter your password: " passpanel
+read -rp "Enter your panel password: " passpanel
 echo "$passpanel" > /etc/data/passpanel
 
 # Clear the screen and update the package repository
@@ -327,7 +328,7 @@ colorized_echo "green" "Socat has been installed."
 # Install Certbot
 colorized_echo "green" "Installing Certbot..."
 curl https://get.acme.sh | sh -s email=$email
-/root/.acme.sh/acme.sh --register-account -m $email --issue --standalone -d $domain -k ec-256 --server letsencrypt --debug
+/root/.acme.sh/acme.sh --server letsencrypt --register-account -m $email --issue -d $domain --standalone -k ec-256 --debug
 /root/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /var/lib/marzban/xray.crt --keypath /var/lib/marzban/xray.key --ecc
 wget -O /var/lib/marzban/xray_config.json "https://raw.githubusercontent.com/Ikram-Maulana/marzen/main/xray/xray-config.json"
 colorized_echo "green" "Certbot has been installed."
@@ -345,9 +346,10 @@ sudo ufw allow http
 sudo ufw allow https
 sudo ufw allow 7879/tcp
 sudo ufw allow 8081/tcp
-sudo ufw allow 1080
+sudo ufw allow 1080/tcp
+sudo ufw allow 1080/udp
 colorized_echo "green" "Enabling UFW..."
-echo "y" | sudo ufw enable
+yes | sudo ufw enable
 colorized_echo "green" "UFW has been configured and enabled."
 
 # Install Database
@@ -365,12 +367,12 @@ colorized_echo "green" "Finalizing the installation..."
 apt autoremove -y
 apt clean
 cd /opt/marzban
-sed -i -e "s/# SUDO_USERNAME = \"admin\"/SUDO_USERNAME = \"${userpanel}\"/" \
-    -e "s/# SUDO_PASSWORD = \"admin\"/SUDO_PASSWORD = \"${passpanel}\"/" /opt/marzban/.env
+sed -i "s/# SUDO_USERNAME = \"admin\"/SUDO_USERNAME = \"${userpanel}\"/" /opt/marzban/.env
+sed -i "s/# SUDO_PASSWORD = \"admin\"/SUDO_PASSWORD = \"${passpanel}\"/" /opt/marzban/.env
 docker compose down && docker compose up -d
 marzban cli admin import-from-env -y
-sed -i -e "s/SUDO_USERNAME = \"${userpanel}\"/# SUDO_USERNAME = \"admin\"/" \
-    -e "s/SUDO_PASSWORD = \"${passpanel}\"/# SUDO_PASSWORD = \"admin\"/" /opt/marzban/.env
+sed -i "s/SUDO_USERNAME = \"${userpanel}\"/# SUDO_USERNAME = \"admin\"/" /opt/marzban/.env
+sed -i "s/SUDO_PASSWORD = \"${passpanel}\"/# SUDO_PASSWORD = \"admin\"/" /opt/marzban/.env
 docker compose down && docker compose up -d
 cd
 profile
