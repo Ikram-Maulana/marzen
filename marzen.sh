@@ -50,14 +50,17 @@ check_root() {
 # version using the `lsb_release` command. It then checks if the detected OS and version are supported
 # based on predefined arrays `SUPPORTED_DEBIAN_VERSIONS` and `SUPPORTED_UBUNTU_VERSIONS`. If the OS
 # and version are not supported, it prints an error message in red color and exits the script with an
-# exit code of 1. If the OS is neither Debian GNU/Linux nor Ubuntu, it also prints an error message
+# exit code of 1. If the OS is neither Debian nor Ubuntu, it also prints an error message
 # and exits the script.
 detect_os() {
   OS=$(lsb_release -si)
   OS_VERSION=$(lsb_release -sc)
 
+  colorized_echo "cyan" "Detected OS: $OS"
+  colorized_echo "cyan" "Detected OS Version: $OS_VERSION"
+
   case $OS in
-    "Debian GNU/Linux")
+    "Debian")
       if [[ ! " ${SUPPORTED_DEBIAN_VERSIONS[@]} " =~ " ${OS_VERSION} " ]]; then
         colorized_echo "red" "Unsupported Debian version. Exiting."
         exit 1
