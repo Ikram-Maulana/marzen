@@ -11,7 +11,7 @@ Marzen is a proxy management tool that provides a simple and easy-to-use user in
 
 ## Requirements
 
-- A VPS running Ubuntu 20.04 (or newer) or Debian 11 (or newer), equipped with at least 1GB of RAM and 1 CPU core.
+- A VPS running Debian 11 (or newer) is recommended, but it also supports Ubuntu 20.04 (or newer). Ensure your VPS is equipped with at least 1GB of RAM and 1 CPU core.
 - A domain that is already configured to point to your VPS's IP address via Cloudflare.
 
 ## Installation
