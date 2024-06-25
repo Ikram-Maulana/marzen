@@ -19,9 +19,9 @@ PENDING="[${YELLOW} PENDING ${NC}]";
 SEND="[${YELLOW} SEND ${NC}]";
 RECEIVE="[${YELLOW} RECEIVE ${NC}]";
 
-# The `check_service_status()` function is a shell script function that checks the status of a service
+# The `service_status_check()` function is a shell script function that checks the status of a service
 # running on a specific port. Here's a breakdown of what the function does:
-check_service_status() {
+service_status_check() {
   local service_name=$1
   local port=$2
   local process_name=$3
