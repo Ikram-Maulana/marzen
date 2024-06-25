@@ -365,20 +365,15 @@ colorized_echo "green" "Finalizing the installation..."
 apt autoremove -y
 apt clean
 cd /opt/marzban
-sed -i "s/# SUDO_USERNAME = \"admin\"/SUDO_USERNAME = \"${userpanel}\"/" /opt/marzban/.env
-sed -i "s/# SUDO_PASSWORD = \"admin\"/SUDO_PASSWORD = \"${passpanel}\"/" /opt/marzban/.env
+sed -i -e "s/# SUDO_USERNAME = \"admin\"/SUDO_USERNAME = \"${userpanel}\"/" \
+    -e "s/# SUDO_PASSWORD = \"admin\"/SUDO_PASSWORD = \"${passpanel}\"/" /opt/marzban/.env
 docker compose down && docker compose up -d
 marzban cli admin import-from-env -y
-sed -i "s/SUDO_USERNAME = \"${userpanel}\"/# SUDO_USERNAME = \"admin\"/" /opt/marzban/.env
-sed -i "s/SUDO_PASSWORD = \"${passpanel}\"/# SUDO_PASSWORD = \"admin\"/" /opt/marzban/.env
+sed -i -e "s/SUDO_USERNAME = \"${userpanel}\"/# SUDO_USERNAME = \"admin\"/" \
+    -e "s/SUDO_PASSWORD = \"${passpanel}\"/# SUDO_PASSWORD = \"admin\"/" /opt/marzban/.env
 docker compose down && docker compose up -d
 cd
-clear
-neofetch
-echo -e " Welcome to Marzban Extended (Marzen) AutoInstaller"
-echo -e " Type \e[1;32mmarzban\e[0m to show command list"
-echo -e ""
-service-check
+profile
 echo "For Marzban dashboard login data: " | tee -a log-install.txt
 echo "-=================================-" | tee -a log-install.txt
 echo "URL HTTPS : https://${domain}/dashboard" | tee -a log-install.txt
