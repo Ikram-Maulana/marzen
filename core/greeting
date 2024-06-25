@@ -1,0 +1,6 @@
+clear
+neofetch
+echo -e " Welcome to Marzban Extended (Marzen) AutoInstaller"
+echo -e " Type \e[1;32mmarzban\e[0m to show command list"
+echo -e ""
+service-check

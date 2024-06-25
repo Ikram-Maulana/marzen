@@ -275,46 +275,7 @@ colorized_echo "green" "Subscription has been installed."
 
 # Add Custom env
 colorized_echo "green" "Adding custom env..."
-cat <<EOF > /opt/marzban/.env
-UVICORN_HOST = "0.0.0.0"
-UVICORN_PORT = 7879
-
-## We highly recommend add admin using marzban cli tool and do not use
-## the following variables which is somehow hard codded infrmation.
-# SUDO_USERNAME = "admin"
-# SUDO_PASSWORD = "admin"
-
-# UVICORN_UDS: "/run/marzban.socket"
-# UVICORN_SSL_CERTFILE = "/var/lib/marzban/xray.crt"
-# UVICORN_SSL_KEYFILE = "/var/lib/marzban/xray.key"
-
-XRAY_JSON = "/var/lib/marzban/xray_config.json"
-XRAY_EXECUTABLE_PATH = "/var/lib/marzban/core/xray"
-# XRAY_SUBSCRIPTION_URL_PREFIX = "https://example.com"
-# XRAY_EXECUTABLE_PATH = "/var/lib/marzban/core/xray"
-# XRAY_ASSETS_PATH = "/var/lib/marzban/assets"
-# XRAY_FALLBACKS_INBOUND_TAG = "INBOUND_X"
-
-# TELEGRAM_API_TOKEN = 123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-# TELEGRAM_ADMIN_ID = 987654321
-# TELEGRAM_PROXY_URL = "http://localhost:8080"
-
-# CLASH_SUBSCRIPTION_TEMPLATE="clash/my-custom-template.yml"
-SUBSCRIPTION_PAGE_TEMPLATE="subscription/index.html"
-CUSTOM_TEMPLATES_DIRECTORY="/var/lib/marzban/templates/"
-HOME_PAGE_TEMPLATE="home/index.html"
-# SUBSCRIPTION_PAGE_LANG="en"
-
-SQLALCHEMY_DATABASE_URL = "sqlite:////var/lib/marzban/db.sqlite3"
-
-### for developers
-# DOCS=true
-# DEBUG=true
-# WEBHOOK_ADDRESS = "http://127.0.0.1:9000/"
-# WEBHOOK_SECRET = "something-very-very-secret"
-# VITE_BASE_API="https://example.com/api/"
-JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 0
-EOF
+wget -O /opt/marzban/.env "https://raw.githubusercontent.com/Ikram-Maulana/marzen/main/core/environment"
 colorized_echo "green" "Custom env has been added."
 
 # Install Xray
@@ -325,15 +286,7 @@ colorized_echo "green" "Xray has been installed."
 # Profile
 colorized_echo "green" "Installing Profile..."
 echo -e 'profile' >> /root/.profile
-cat <<EOF > /usr/bin/profile
-#!/bin/bash
-clear
-neofetch
-echo -e " Welcome to Marzban Extended (Marzen) AutoInstaller"
-echo -e " Type \e[1;32mmarzban\e[0m to show command list"
-echo -e ""
-service-check
-EOF
+wget -O /usr/bin/profile "https://raw.githubusercontent.com/Ikram-Maulana/marzen/main/core/greeting";
 chmod +x /usr/bin/profile
 apt install neofetch -y
 # Ensure the .config/neofetch directory exists
