@@ -145,6 +145,21 @@ validate_username() {
   done
 }
 
+# The above shell script defines a function `validate_port` that prompts the user to enter a panel
+# port (numeric value only) and validates the input. Here's a breakdown of what the script does:
+validate_port() {
+  while true; do
+    read -rp "Enter your panel port (only numeric): " port
+
+    if [[ ! "$port" =~ ^[0-9]+$ ]] || [[ "$port" == "80" ]] || [[ "$port" == "443" ]]; then
+      echo "Port must be only numeric and not 80 or 443."
+    else
+      echo "The port you entered is $port"
+      break
+    fi
+  done
+}
+
 # The above shell script defines a function `install_xray` that performs the following tasks:
 # 1. Retrieves the latest version of Xray-core from the GitHub repository "XTLS/Xray-core".
 # 2. Creates a directory `/var/lib/marzban/core` if it does not exist.
@@ -215,6 +230,7 @@ read -rp "Enter your email for Certbot: " email
 validate_username
 read -rp "Enter your panel password: " passpanel
 echo "$passpanel" > /etc/data/passpanel
+validate_port
 
 # Clear the screen and update the package repository
 clear
@@ -282,6 +298,9 @@ colorized_echo "green" "Adding custom env..."
 wget -O /opt/marzban/.env "https://raw.githubusercontent.com/Ikram-Maulana/marzen/main/core/environment"
 colorized_echo "green" "Custom env has been added."
 
+# Initialize Marzban Assets
+mkdir -p /var/lib/marzban/assets
+
 # Install Xray
 colorized_echo "green" "Installing Xray..."
 install_xray
@@ -347,10 +366,10 @@ sudo ufw default allow outgoing
 sudo ufw allow ssh
 sudo ufw allow http
 sudo ufw allow https
-sudo ufw allow 7879/tcp
 sudo ufw allow 8081/tcp
 sudo ufw allow 1080/tcp
 sudo ufw allow 1080/udp
+sudo ufw allow $port/tcp
 colorized_echo "green" "Enabling UFW..."
 yes | sudo ufw enable
 colorized_echo "green" "UFW has been configured and enabled."
@@ -372,6 +391,7 @@ apt clean
 cd /opt/marzban
 sed -i "s/# SUDO_USERNAME = \"admin\"/SUDO_USERNAME = \"${userpanel}\"/" /opt/marzban/.env
 sed -i "s/# SUDO_PASSWORD = \"admin\"/SUDO_PASSWORD = \"${passpanel}\"/" /opt/marzban/.env
+sed -i "s/UVICORN_PORT = 7879/UVICORN_PORT = ${port}/" /opt/marzban/.env
 docker compose down && docker compose up -d
 marzban cli admin import-from-env -y
 sed -i "s/SUDO_USERNAME = \"${userpanel}\"/# SUDO_USERNAME = \"admin\"/" /opt/marzban/.env
@@ -381,8 +401,8 @@ cd
 profile
 echo "For Marzban dashboard login data: " | tee -a log-install.txt
 echo "-=================================-" | tee -a log-install.txt
-echo "URL HTTPS : https://${domain}/dashboard" | tee -a log-install.txt
-echo "URL HTTP  : http://${domain}:7879/dashboard" | tee -a log-install.txt
+echo "URL HTTPS : https://${domain}:${port}/dashboard" | tee -a log-install.txt
+echo "URL HTTP  : http://${domain}:${port}/dashboard" | tee -a log-install.txt
 echo "username  : ${userpanel}" | tee -a log-install.txt
 echo "password  : ${passpanel}" | tee -a log-install.txt
 echo "-=================================-" | tee -a log-install.txt

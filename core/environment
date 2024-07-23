@@ -1,5 +1,5 @@
 UVICORN_HOST = "0.0.0.0"
-UVICORN_PORT = 7879
+UVICORN_PORT = 8000
 
 
 ## We highly recommend add admin using `marzban cli` tool and do not use
@@ -8,15 +8,15 @@ UVICORN_PORT = 7879
 # SUDO_PASSWORD = "admin"
 
 # UVICORN_UDS: "/run/marzban.socket"
-# UVICORN_SSL_CERTFILE = "/var/lib/marzban/xray.crt"
-# UVICORN_SSL_KEYFILE = "/var/lib/marzban/xray.key"
+UVICORN_SSL_CERTFILE = "/var/lib/marzban/xray.crt"
+UVICORN_SSL_KEYFILE = "/var/lib/marzban/xray.key"
 
 
 XRAY_JSON = "/var/lib/marzban/xray_config.json"
 XRAY_EXECUTABLE_PATH = "/var/lib/marzban/core/xray"
 # XRAY_SUBSCRIPTION_URL_PREFIX = "https://example.com"
 # XRAY_EXECUTABLE_PATH = "/var/lib/marzban/core/xray"
-# XRAY_ASSETS_PATH = "/var/lib/marzban/assets"
+XRAY_ASSETS_PATH = "/var/lib/marzban/assets"
 # XRAY_FALLBACKS_INBOUND_TAG = "INBOUND_X"
 
 

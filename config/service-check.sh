@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+panel_port=$(netstat -tunlp | grep 'python' | awk '{split($4, a, ":"); print a[2]}')
+
 # Color constants
 RED='\033[0;31m';
 GREEN='\033[0;32m';
@@ -45,7 +47,7 @@ check_ufw_status() {
 
 # Service status check
 NGINX=$(service_status_check "Nginx" "443" "nginx")
-MARZ=$(service_status_check "Marzban Panel" "7879" "python")
+MARZ=$(service_status_check "Marzban Panel" "$panel_port" "python")
 UFW=$(check_ufw_status)
 
 # Display the service status

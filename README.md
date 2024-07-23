@@ -34,7 +34,7 @@ Once the installation is complete:
 - The Marzban files will be located at /opt/marzban
   The configuration file can be found at /opt/marzban/.env (refer to configurations section to see variables)
 - The data files will be placed at /var/lib/marzban
-- You can access the Marzban dashboard by opening a web browser and navigating to http://YOUR_DOMAIN:8000/dashboard/ (replace YOUR_DOMAIN with the actual domain)
+- You can access the Marzban dashboard by opening a web browser and navigating to http://YOUR_DOMAIN:YOUR_PORT/dashboard (replace YOUR_DOMAIN and YOUR_PORT with your actual domain and port)
 - You can change the configuration by editing the .env file
 
   ```bash
